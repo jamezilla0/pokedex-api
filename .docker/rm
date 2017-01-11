@@ -1,0 +1,15 @@
+#!/usr/bin/env bash
+
+echo "Stopping and removing all Docker containers..."
+
+# Destroy and rebuild all docker containers
+docker-compose down
+
+# Remove remaining, if there is any other running container not specified in the yml file
+if [ -n "$(docker ps -qa)" ]; then
+    docker stop $(docker ps -qa) >> /dev/null
+    docker rm -f $(docker ps -qa) >> /dev/null
+fi
+
+# Show running containers
+docker ps

@@ -9,3 +9,4 @@ nbproject
 *.sqlite
 *.sqlite-journal
 node_modules
+*.zip

@@ -1,40 +1,29 @@
 #!/usr/bin/env bash
 
-__eol(){
-  echo " " # EOL
-}
-__header(){
-  __eol
-  echo "#########################################"
-  if [ -n "$1" ]; then
-    __eol
-    echo $1
-  fi
-  __eol
-}
+source .env
 
-echo "Rebuilding Docker containers..."
+if [ ! -f "pokedex.sqlite" ]
+then
+    echo "Downloading pokedex.sqlite DB..."
+    wget -q https://github.com/metaunicorn/pokedex-data/raw/master/db/database-sqlite.zip
+    rm -f pokedex.sqlite
+    unzip -q database-sqlite.zip
+    rm -f database-sqlite.zip
+    mv database.sqlite pokedex.sqlite
+fi
 
-# Calculate ENV variables
-source .docker/config.env.sh
+if [ -z "${1}" ]
+then
+    echo "Rebuilding Docker containers..."
+else
+    echo "Rebuilding Docker containers: ${@}..."
+fi
 
 # Destroy and rebuild all docker containers
-docker-compose down
-
-# Re-calculate ENV variables
-source .docker/config.env.sh
-
-# Remove remaining, if there is any other running container not specified in the yml file
-# if [ -n "$(docker ps -qa)" ]; then
-#  docker stop $(docker ps -qa) >> /dev/null
-#  docker rm -f $(docker ps -qa) >> /dev/null
-# fi
+docker-compose stop $@
 
 # Build and start containers again
-docker-compose build
-docker-compose up -d
+docker-compose up -d --build $@
 
 # Show running containers
-__header "Currently running Docker containers:"
-# Print running containers in a more compact way, without showing table headers
-docker ps --format "table {{.ID}}\t{{.Names}} ({{.Image}})\t{{.Status}}" | awk 'NR>1'
+docker ps

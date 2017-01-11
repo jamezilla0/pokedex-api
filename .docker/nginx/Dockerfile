@@ -11,7 +11,8 @@ COPY nginx.conf /etc/nginx/nginx.conf
 EXPOSE 80 443
 
 # Entry point
-WORKDIR /usr/local/bin/
-COPY entrypoint.sh ./entrypoint
-RUN chmod +x ./entrypoint
-ENTRYPOINT ["./entrypoint"]
+COPY entrypoint.sh /docker-entrypoint
+RUN chmod +x /docker-entrypoint
+
+ENTRYPOINT ["/docker-entrypoint"]
+CMD ["start"]

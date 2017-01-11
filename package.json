@@ -6,7 +6,9 @@
     "bluebird": "^3.4.7",
     "express": "^4.14.0",
     "mongoose": "^4.7.6",
-    "nodemon": "^1.11.0"
+    "nodemon": "^1.11.0",
+    "sqlite": "^2.2.4",
+    "underscore": "^1.8.3"
   },
   "devDependencies": {},
   "scripts": {
