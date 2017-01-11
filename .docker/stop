@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+
+source .docker/config.env.sh
+
+docker-compose stop $@

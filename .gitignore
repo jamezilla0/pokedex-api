@@ -1,0 +1,11 @@
+*~
+.DS_Store
+.tmp
+tmp
+.idea
+nbproject
+*.log
+*.lock
+*.sqlite
+*.sqlite-journal
+node_modules

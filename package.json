@@ -1,0 +1,15 @@
+{
+  "name": "pokedex-api",
+  "version": "1.0.0",
+  "private": true,
+  "dependencies": {
+    "bluebird": "^3.4.7",
+    "express": "^4.14.0",
+    "mongoose": "^4.7.6",
+    "nodemon": "^1.11.0"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "start": "nodemon server.js"
+  }
+}

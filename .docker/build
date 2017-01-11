@@ -1,0 +1,40 @@
+#!/usr/bin/env bash
+
+__eol(){
+  echo " " # EOL
+}
+__header(){
+  __eol
+  echo "#########################################"
+  if [ -n "$1" ]; then
+    __eol
+    echo $1
+  fi
+  __eol
+}
+
+echo "Rebuilding Docker containers..."
+
+# Calculate ENV variables
+source .docker/config.env.sh
+
+# Destroy and rebuild all docker containers
+docker-compose down
+
+# Re-calculate ENV variables
+source .docker/config.env.sh
+
+# Remove remaining, if there is any other running container not specified in the yml file
+# if [ -n "$(docker ps -qa)" ]; then
+#  docker stop $(docker ps -qa) >> /dev/null
+#  docker rm -f $(docker ps -qa) >> /dev/null
+# fi
+
+# Build and start containers again
+docker-compose build
+docker-compose up -d
+
+# Show running containers
+__header "Currently running Docker containers:"
+# Print running containers in a more compact way, without showing table headers
+docker ps --format "table {{.ID}}\t{{.Names}} ({{.Image}})\t{{.Status}}" | awk 'NR>1'

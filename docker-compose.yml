@@ -1,0 +1,46 @@
+version: '2'
+
+services:
+  nginx:
+    build: ./.docker/nginx
+    command: "start"
+    container_name: nginx
+    links:
+      - node-app:node-app
+    ports:
+      - "${APP_PORT}:80"
+      - "${APP_PORT_SSL}:443"
+    depends_on:
+      - node-app
+    volumes:
+      - ${APP_PATH}:/app
+      - ./.docker/nginx/conf.d:/etc/nginx/conf.d
+      - ${APP_DATA_PATH}/logs/nginx:/var/log/nginx
+    restart: on-failure:5
+
+  node-app:
+    build: ./.docker/node
+    command: "start"
+    container_name: node-app
+    links:
+      - mongo:mongo
+    depends_on:
+      - mongo
+    ports:
+        - "5000:5000"
+    volumes:
+      - ${APP_PATH}:/app
+      - ${APP_DATA_PATH}/logs/node:/var/log
+      - ${APP_DATA_PATH}/cache/npm:/usr/local/cache/npm
+    restart: on-failure:5
+
+  mongo:
+    build: ./.docker/mongo
+    command: "start"
+    container_name: mongo
+    ports:
+      - "27017:27017"
+    volumes:
+      - ${APP_DATA_PATH}/db/mongo:/var/lib/mongo
+      - ${APP_DATA_PATH}/logs/mongo:/var/log
+    restart: on-failure:5
