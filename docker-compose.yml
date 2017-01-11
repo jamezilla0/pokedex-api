@@ -36,11 +36,12 @@ services:
 
   mongo:
     build: ./.docker/mongo
-    command: "start"
     container_name: mongo
     ports:
       - "27017:27017"
+      - "28017:28017"
     volumes:
-      - ${APP_DATA_PATH}/db/mongo:/var/lib/mongo
+      - ${APP_DATA_PATH}/db/mongo:/data/db
+      - ${APP_DATA_PATH}/db/mongo-config:/data/configdb
       - ${APP_DATA_PATH}/logs/mongo:/var/log
     restart: on-failure:5
