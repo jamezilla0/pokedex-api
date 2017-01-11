@@ -5,15 +5,27 @@ Data is imported from the [`metaunicorn/pokedex-data`](https://github.com/metaun
 
 ## Requirements
 
-- Docker (1.12 or greater)
+- Linux or macOS (with wget and unzip)
+- Docker (1.12.5 or greater)
 
 ## Getting Started
 
 Once you have Docker installed in your machine, you only need to build and start the docker containers
 by running `.docker/build` inside the project folder.
 
-This will expose the API under the http://localhost/ or http://localhost:5080/ URLs
-(depending if your port 80 is available or not).
+This will expose the API under the [http://localhost/](http://localhost/) URL.
+It needs the port 80 free in your host OS, in case it is not free, you can change it
+in the `APP_HTTP_PORT` variable of the `.env` file.
+
+IMPORTANT: don't run `npm install` from your host machine, use `.docker/npm install` instead, otherwise
+OS-specific package bindings and binaries may not work in the docker image.
+
+## API Reference
+
+List of available API endpoints:
+
+- `/pokemon/`
+- `/pokemon/:id/`
 
 ## License
 

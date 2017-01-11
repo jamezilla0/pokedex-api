@@ -1,21 +1,32 @@
 'use strict';
 
-const express = require('express');
-const app = express();
-const mongoose = require('mongoose');
-const APP_PORT = process.env.APP_PORT || 5000;
+const app = require("app/app");
+const port = process.env.NODE_PORT || 5000;
+const db = require("app/db");
 
-mongoose.connect('mongodb://mongo:' + process.env.MONGO_PORT + '/demo');
+const Promise = require("bluebird");
+const _ = require("underscore");
 
-var db = mongoose.connection;
-db.on('error', console.error.bind(console, 'connection error:'));
+var routers = {
+  "/pokemon": require("app/routers/pokemon")
+};
 
-app.get('/', function (req, res) {
-  res.send({"message": "Hello World!"});
+_.each(_.keys(routers), function(path){
+  app.use(path, routers[path]);
 });
 
-db.once('open', function () {
-  app.listen(APP_PORT, function () {
-    console.log('Example app listening on port ' + APP_PORT);
+Promise.resolve()
+  .then(function () {
+    return db.sqlite.open('./pokedex.sqlite', Promise);
+  })
+  .then(function () {
+    return db.mongo.once('open', Promise);
+  })
+  .catch(function (err) {
+    return console.error(err.stack);
+  })
+  .finally(function () {
+    return app.listen(port, function () {
+      console.log('App listening on port ' + port);
+    });
   });
-});
