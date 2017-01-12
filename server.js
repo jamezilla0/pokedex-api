@@ -7,12 +7,23 @@ const db = require("app/db");
 const Promise = require("bluebird");
 const _ = require("underscore");
 
-var routers = {
+const routers = {
   "/pokemon": require("app/routers/pokemon")
 };
 
-_.each(_.keys(routers), function(path){
+_.each(_.keys(routers), function (path) {
   app.use(path, routers[path]);
+});
+
+app.use(function (err, req, res, next) {
+  console.error(err);
+  if ('httpStatusCode' in err) {
+    res.status(err.httpStatusCode)
+      .send({"error_code": err.httpStatusCode, "error_message": err.httpErrorMessage})
+  } else {
+    res.status(500)
+      .send({"error_code": 500, "error_message": "Internal Server Error"})
+  }
 });
 
 Promise.resolve()

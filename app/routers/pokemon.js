@@ -1,14 +1,12 @@
 "use strict";
 
-var express = require('express');
-var router = express.Router();
-var db = require("app/db");
-var sPokemon = require("app/models/sqlite/pokemon");
+const express = require('express');
+const router = express.Router();
+const db = require("app/db");
+const PokemonSpecies = require("app/models/sqlite/PokemonSpecies");
 
 router.get('/', function (req, res, next) {
-  Promise.all([
-    db.sqlite.all('SELECT * FROM pokemon')
-  ])
+  PokemonSpecies.all()
     .then(function (data) {
       return res.send(data);
     })
@@ -18,11 +16,7 @@ router.get('/', function (req, res, next) {
 });
 
 router.get('/:id', function (req, res, next) {
-  (
-    isNaN(req.params.id) ?
-      new sPokemon(null, req.params.id) :
-      new sPokemon(req.params.id)
-  ).load()
+  PokemonSpecies.findBy(isNaN(req.params.id) ? 'identifier' : 'id', req.params.id)
     .then(function (data) {
       return res.send(data);
     })
