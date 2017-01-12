@@ -5,10 +5,12 @@ var _ = require("underscore");
 
 /**
  * @param {int} id
+ * @param {string} name
  * @constructor
  */
-var Pokemon = function (id) {
-  this._id = id;
+var Pokemon = function (id, name) {
+  this._id = id || null;
+  this._name = name || null;
   this.data = null;
 };
 
@@ -20,10 +22,26 @@ Pokemon.prototype.getId = function () {
 };
 
 /**
+ * @returns {int}
+ */
+Pokemon.prototype.getName = function () {
+  return this._name;
+};
+
+/**
  * @returns {Object|null}
  */
 Pokemon.prototype.getData = function () {
   return this.data;
+};
+
+/**
+ * @param {string} colName
+ * @param {string|int} colValue
+ * @returns {Promise}
+ */
+var getPokemonBy = function (colName, colValue) {
+  return db.get('SELECT * FROM pokemon WHERE ' + colName + ' = ?', colValue);
 };
 
 /**
@@ -33,15 +51,19 @@ Pokemon.prototype.load = function () {
   var me = this;
 
   return new Promise(function (resolve, reject) {
-    Promise.all([
-      db.get('SELECT * FROM pokemon WHERE id = ?', me.getId()),
-      db.get('SELECT * FROM pokemon_species WHERE id = ?', me.getId())
-    ])
-      .then(function (data) {
-        if (!data[0]) {
+    (
+      me.getId() ?
+        getPokemonBy('id', me.getId()) :
+        getPokemonBy('identifier', me.getName())
+    )
+      .then(function (pkm) {
+        if (!pkm) {
           throw new Error("Pokemon not found: " + me.getId());
         }
-        return _.extend.apply(null, data);
+        me._id = pkm.id;
+        me._name = pkm.name;
+
+        return pkm;
       })
       .then(function (pkm) {
         return db.all('SELECT * FROM pokemon_types WHERE pokemon_id = ? ORDER BY slot', me.getId())
@@ -101,6 +123,12 @@ Pokemon.prototype.load = function () {
               pkm["yield_" + statNames[stat.stat_id - 1]] = parseInt(stat.effort);
             });
             return pkm;
+          });
+      })
+      .then(function (pkm) {
+        return db.get('SELECT * FROM pokemon_species WHERE id = ?', me.getId())
+          .then(function (species) {
+            return _.extend(pkm, species);
           });
       })
       .then(function (pkm) {

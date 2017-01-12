@@ -26,6 +26,7 @@ List of available API endpoints:
 
 - `/pokemon/`
 - `/pokemon/:id/`
+- `/pokemon/:name/`
 
 ## License
 

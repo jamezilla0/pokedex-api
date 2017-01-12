@@ -18,7 +18,11 @@ router.get('/', function (req, res, next) {
 });
 
 router.get('/:id', function (req, res, next) {
-  new sPokemon(req.params.id).load()
+  (
+    isNaN(req.params.id) ?
+      new sPokemon(null, req.params.id) :
+      new sPokemon(req.params.id)
+  ).load()
     .then(function (data) {
       return res.send(data);
     })
