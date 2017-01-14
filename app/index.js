@@ -2,7 +2,7 @@
 
 const express = require("express");
 const app = express();
-const _ = require("underscore");
+const _ = require("lodash");
 const routers = {
   "/pokemon": require("app/routers/pokemon")
 };

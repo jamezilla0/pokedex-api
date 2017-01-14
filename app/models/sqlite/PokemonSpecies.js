@@ -1,10 +1,9 @@
 "use strict";
 
 const db = require("app/db").sqlite;
-const _ = require("underscore");
+const _ = require("lodash");
 const Pokemon = require("./Pokemon");
 const Promise = require("bluebird");
-const error = require("app/errors");
 
 /**
  * @returns {Promise}

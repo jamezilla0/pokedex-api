@@ -5,10 +5,10 @@
   "dependencies": {
     "bluebird": "^3.4.7",
     "express": "^4.14.0",
+    "lodash": "^4.17.4",
     "nodemon": "^1.11.0",
     "rethinkdb": "^2.3.3",
-    "sqlite": "^2.2.4",
-    "underscore": "^1.8.3"
+    "sqlite": "^2.2.4"
   },
   "devDependencies": {},
   "scripts": {
