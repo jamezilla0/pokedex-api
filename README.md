@@ -13,20 +13,28 @@ Data is imported from the [`metaunicorn/pokedex-data`](https://github.com/metaun
 Once you have Docker installed in your machine, you only need to build and start the docker containers
 by running `docker/bin/build` inside the project folder.
 
-This will expose the API under the [http://localhost/](http://localhost/) URL.
+This will expose the API under the [http://localhost/](http://localhost/) URL by default.
 It needs the port 80 free in your host OS, in case it is not free, you can change it
 in the `PK_HTTP_PORT` variable of the `.env` file.
 
 IMPORTANT: don't run `npm install` from your host machine, use `docker/bin/pm install` instead, otherwise
 OS-specific package bindings and binaries may not work in the docker image.
 
+## Default URLs
+
+- API: [http://localhost/](http://localhost/)
+- DB Management: [http://localhost:29019/](http://localhost:29019/)
+
+
 ## API Reference
+
+All API endpoints are read-only and use the `GET` HTTP Method.
 
 List of available API endpoints:
 
-- `/pokemon/`
-- `/pokemon/:id/`
-- `/pokemon/:name/`
+- [`/pokemon/`](http://localhost/pokemon/)
+- [`/pokemon/:id/`](http://localhost/pokemon/701/)
+- [`/pokemon/:name/`](http://localhost/pokemon/hawlucha/)
 
 ## License
 
