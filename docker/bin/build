@@ -2,7 +2,7 @@
 
 source .env
 
-if [ ! -f "pokedex.sqlite" ]
+if [ ! -f "${PK_DOCKER_DATA_PATH}/db/pokedex.sqlite" ]
 then
     echo "Downloading pokedex.sqlite DB..."
     PWD_=$PWD

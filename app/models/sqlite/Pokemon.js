@@ -120,10 +120,7 @@ function _findBy(where, value, withForms) {
             return data;
           });
       })
-      .then(resolve, reject)
-      .catch(function (err) {
-        return next(err);
-      });
+      .then(resolve, reject);
   });
 }
 

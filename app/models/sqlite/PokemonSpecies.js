@@ -10,7 +10,7 @@ const Promise = require("bluebird");
  */
 function _all() {
   return new Promise(function (resolve, reject) {
-    return db.sqlite.all('SELECT * FROM pokemon_species WHERE ORDER BY id').then(resolve, reject);
+    return db.sqlite.all('SELECT * FROM pokemon_species ORDER BY id').then(resolve, reject);
   });
 }
 
@@ -56,10 +56,7 @@ function _findBy(where, value) {
             });
           });
       })
-      .then(resolve, reject)
-      .catch(function (err) {
-        return next(err);
-      });
+      .then(resolve, reject);
   });
 }
 
