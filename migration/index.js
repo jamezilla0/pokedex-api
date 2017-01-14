@@ -3,6 +3,7 @@
 const db = require("app/db");
 const r = db.rethink;
 const Promise = require("bluebird");
+const mongoose = require("mongoose");
 const _ = require("lodash");
 var r_conn = null;
 var migratePokemon = require("migration/migrators/pokemon");
@@ -11,6 +12,12 @@ var migratePokemon = require("migration/migrators/pokemon");
 Promise.resolve()
   .then(function () {
     return db.sqlite.open('./docker/data/db/pokedex.sqlite', Promise);
+  })
+  .then(function () {
+    return db.mongo.once('open', Promise);
+  })
+  .then(function () {
+    return db.mongo.dropDatabase(null);
   })
   .then(function () {
     return r.connect({host: 'rethinkdb', port: 28015});

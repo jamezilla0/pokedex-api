@@ -40,6 +40,8 @@ services:
       - ${PK_DOCKER_DATA_PATH}/db/mongodb/configdb:/data/configdb
       - ${PK_DOCKER_DATA_PATH}/logs/mongodb:/var/log
     restart: on-failure:5
+    environment:
+      - MONGO_PORT=27017
 
   app:
     build: ${PK_DOCKER_CONFIG_PATH}/node

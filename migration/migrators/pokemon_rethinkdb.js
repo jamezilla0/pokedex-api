@@ -3,7 +3,6 @@
 const db = require("app/db");
 const _ = require("lodash");
 const Promise = require("bluebird");
-const model = require("app/models/importer");
 
 /**
  * @param {Object} row
@@ -120,7 +119,7 @@ function findPokemon(where, value, withForms) {
               return data;
             }
             var statNames = ['hp', 'attack', 'defense', 'sp_attack', 'sp_defense', 'speed'];
-            var baseStatTotal = 0, yieldTotal = 0;
+            var baseStatTotal = 0;
             _.each(stats, function (stat) {
               data["base_" + statNames[stat.stat_id - 1]] = parseInt(stat.base_stat);
               baseStatTotal += parseInt(stat.base_stat);
@@ -129,11 +128,8 @@ function findPokemon(where, value, withForms) {
             data["base_total"] = baseStatTotal;
 
             _.each(stats, function (stat) {
-              yieldTotal += parseInt(stat.effort);
               data["yield_" + statNames[stat.stat_id - 1]] = parseInt(stat.effort);
             });
-
-            data["yield_total"] = yieldTotal;
             return data;
           });
       })
@@ -161,7 +157,7 @@ function findPokemon(where, value, withForms) {
   });
 }
 
-module.exports = function () {
+module.exports = function (conn) {
   return new Promise(function (resolve, reject) {
     return db.sqlite.all('SELECT * FROM pokemon_species ORDER BY id')
       .then(function (rows) {
@@ -172,41 +168,28 @@ module.exports = function () {
           return completePokemonData(row)
             .then(function (row) {
               console.log("Migrating Poke # " + row.id);
-              // Insert into mongodb
-              return new model('Pokemon')({
+              return db.rethink.db('pokedex').table('pokemon').insert({
                 'nid': row.id,
                 'name': row.identifier,
                 'type1': row.type_1,
                 'type2': row.type_2,
-                'hp': {
-                  base: row.base_hp,
-                  yield: row.yield_hp,
-                },
-                'attack': {
-                  base: row.base_attack,
-                  yield: row.yield_attack,
-                },
-                'defense': {
-                  base: row.base_defense,
-                  yield: row.yield_defense,
-                },
-                'sp_attack': {
-                  base: row.base_sp_attack,
-                  yield: row.yield_sp_attack,
-                },
-                'sp_defense': {
-                  base: row.base_sp_defense,
-                  yield: row.yield_sp_defense,
-                },
-                'speed': {
-                  base: row.base_speed,
-                  yield: row.yield_speed,
-                },
-                'base_total': row.base_total,
+                "base_hp": row.base_hp,
+                "base_attack": row.base_attack,
+                "base_defense": row.base_defense,
+                "base_sp_attack": row.base_sp_attack,
+                "base_sp_defense": row.base_sp_defense,
+                "base_speed": row.base_speed,
+                "base_total": row.base_total,
+                "yield_hp": row.yield_hp,
+                "yield_attack": row.yield_attack,
+                "yield_defense": row.yield_defense,
+                "yield_sp_attack": row.yield_sp_attack,
+                "yield_sp_defense": row.yield_sp_defense,
+                "yield_speed": row.yield_speed,
                 "forms": _.map(row.forms, function (val, key) {
                   return key;
                 })
-              }).save();
+              }).run(conn);
             });
         }));
       })
