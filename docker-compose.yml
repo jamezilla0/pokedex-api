@@ -2,43 +2,46 @@ version: '2'
 
 services:
   nginx:
-    build: ${DOCKER_CONFIG_PATH}/nginx
+    build: ${PK_DOCKER_CONFIG_PATH}/nginx
     container_name: nginx
     links:
       - node-api:node-api
     ports:
-      - "${APP_HTTP_PORT}:80"
-      - "${APP_HTTP_PORT_SSL}:443"
+      - "${PK_HTTP_PORT}:80"
+      - "${PK_HTTP_PORT_SSL}:443"
     depends_on:
       - node-api
     volumes:
-      - ${DOCKER_CONFIG_PATH}/nginx/conf.d:/etc/nginx/conf.d
-      - ${DOCKER_DATA_PATH}/logs/nginx:/var/log/nginx
+      - ${PK_DOCKER_CONFIG_PATH}/nginx/conf.d:/etc/nginx/conf.d
+      - ${PK_DOCKER_DATA_PATH}/logs/nginx:/var/log/nginx
     restart: on-failure:5
 
   node-api:
-    build: ${DOCKER_CONFIG_PATH}/node
+    build: ${PK_DOCKER_CONFIG_PATH}/node
     container_name: node-api
     links:
-      - mongo:mongo
+      - rethinkdb:rethinkdb
     depends_on:
-      - mongo
+      - rethinkdb
     volumes:
-      - ${SRC_PATH}:${NODE_PATH}
-      - ${DOCKER_DATA_PATH}/logs/node-api:/var/log
-      - ${DOCKER_DATA_PATH}/cache/node-api/npm:/usr/local/cache/npm
-      - ${DOCKER_DATA_PATH}/cache/node-api/root:/root
+      - ${PK_SRC_PATH}:${PK_NODE_PATH}
+      - ${PK_DOCKER_DATA_PATH}/logs/node-api:/var/log
+      - ${PK_DOCKER_DATA_PATH}/cache/node-api/npm:/usr/local/cache/npm
+      - ${PK_DOCKER_DATA_PATH}/cache/node-api/root:/root
     restart: on-failure:5
     environment:
-      - NODE_ENV
-      - NODE_PORT:5000
-      - NODE_PATH
+      - NODE_ENV=${PK_NODE_ENV}
+      - NODE_PATH=${PK_NODE_PATH}
+      - NODE_PORT=5000
 
-  mongo:
-    build: ${DOCKER_CONFIG_PATH}/mongo
-    container_name: mongo
+  rethinkdb:
+    image: rethinkdb:2.3.5
+    ports:
+      - ${PK_DB_WEBUI_PORT}:8080 # process, cluster, webui: 28015 29015 8080
     volumes:
-      - ${DOCKER_DATA_PATH}/db/mongo:/data/db
-      - ${DOCKER_DATA_PATH}/db/mongo-config:/data/configdb
-      - ${DOCKER_DATA_PATH}/logs/mongo:/var/log
+      - ${PK_DOCKER_DATA_PATH}/db/rethinkdb:/data
+      - ${PK_DOCKER_DATA_PATH}/logs/rethinkdb:/var/log
     restart: on-failure:5
+    environment:
+      - RETHINKDB_PORT=28015
+      - RETHINKDB_PORT_CLUSTER=29015

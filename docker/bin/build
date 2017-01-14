@@ -5,11 +5,15 @@ source .env
 if [ ! -f "pokedex.sqlite" ]
 then
     echo "Downloading pokedex.sqlite DB..."
+    PWD_=$PWD
+    mkdir -p ${DOCKER_DATA_PATH}/db
+    cd ${DOCKER_DATA_PATH}/db
     wget -q https://github.com/metaunicorn/pokedex-data/raw/master/db/database-sqlite.zip
     rm -f pokedex.sqlite
     unzip -q database-sqlite.zip
     rm -f database-sqlite.zip
     mv database.sqlite pokedex.sqlite
+    cd ${PWD_}
 fi
 
 if [ -z "${1}" ]

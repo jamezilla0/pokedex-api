@@ -1,5 +1,5 @@
 # pokedex-api
-Pokedex API written in Node, Express and Mongo. Served by Nginx and powered by Docker containers.
+Pokedex API written in Node, Express and RethinkDB. Served by Nginx and powered by Docker containers.
 
 Data is imported from the [`metaunicorn/pokedex-data`](https://github.com/metaunicorn/pokedex-data) project.
 
@@ -11,14 +11,19 @@ Data is imported from the [`metaunicorn/pokedex-data`](https://github.com/metaun
 ## Getting Started
 
 Once you have Docker installed in your machine, you only need to build and start the docker containers
-by running `.docker/build` inside the project folder.
+by running `docker/bin/build` inside the project folder.
 
 This will expose the API under the [http://localhost/](http://localhost/) URL.
 It needs the port 80 free in your host OS, in case it is not free, you can change it
-in the `APP_HTTP_PORT` variable of the `.env` file.
+in the `PK_HTTP_PORT` variable of the `.env` file.
 
-IMPORTANT: don't run `npm install` from your host machine, use `.docker/npm install` instead, otherwise
+IMPORTANT: don't run `npm install` from your host machine, use `docker/bin/pm install` instead, otherwise
 OS-specific package bindings and binaries may not work in the docker image.
+
+## Technologies
+
+RethinkDB may be too much for this project, which won't use the real-time potential of this NoSQL database, but
+it has been chosen because of the possibilities and flexibility it offers compared to MongoDB and others.
 
 ## API Reference
 
