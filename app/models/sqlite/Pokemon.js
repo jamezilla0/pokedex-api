@@ -9,7 +9,7 @@ const error = require("app/errors");
  */
 function _all() {
   return new Promise(function (resolve, reject) {
-    return db.sqlite.all('SELECT * FROM pokemon WHERE ORDER BY id').then(resolve, reject);
+    return db.all('SELECT * FROM pokemon ORDER BY id').then(resolve, reject);
   });
 }
 
