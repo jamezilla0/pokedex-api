@@ -1,5 +1,5 @@
 # pokedex-api
-Pokedex API written in Node, Express and RethinkDB. Served by Nginx and powered by Docker containers.
+Pokedex API written in Node, Express and MongoDB (mongoose). Served by Nginx and powered by Docker containers.
 
 Data is imported from the [`metaunicorn/pokedex-data`](https://github.com/metaunicorn/pokedex-data) project.
 
@@ -19,11 +19,6 @@ in the `PK_HTTP_PORT` variable of the `.env` file.
 
 IMPORTANT: don't run `npm install` from your host machine, use `docker/bin/pm install` instead, otherwise
 OS-specific package bindings and binaries may not work in the docker image.
-
-## Technologies
-
-RethinkDB may be too much for this project, which won't use the real-time potential of this NoSQL database, but
-it has been chosen because of the possibilities and flexibility it offers compared to MongoDB and others.
 
 ## API Reference
 

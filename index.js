@@ -8,13 +8,10 @@ const Promise = require("bluebird");
 // Serve app only if all DB connections were successful
 Promise.resolve()
   .then(function () {
-    return db.sqlite.open('./docker/data/db/pokedex.sqlite', Promise);
+    return db.sqlite.open(process.env.SQLITE_DB, Promise);
   })
   .then(function () {
     return db.mongo.once('open', Promise);
-  })
-  .then(function () {
-    return db.rethink.connect({host: 'rethinkdb', port: 28015});
   })
   .catch(function (err) {
     return console.error(err.stack);
