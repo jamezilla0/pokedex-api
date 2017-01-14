@@ -12,6 +12,6 @@
   },
   "devDependencies": {},
   "scripts": {
-    "start": "nodemon server.js"
+    "start": "nodemon index.js"
   }
 }

@@ -1,4 +1,4 @@
 #!/usr/bin/env bash
 
 # This is the only recommended way to use npm (don't run `npm install` from your host machine!)
-docker-compose run node-api npm $@
+docker-compose run app npm $@

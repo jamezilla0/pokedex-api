@@ -6,10 +6,10 @@ if [ ! -f "pokedex.sqlite" ]
 then
     echo "Downloading pokedex.sqlite DB..."
     PWD_=$PWD
-    mkdir -p ${DOCKER_DATA_PATH}/db
-    cd ${DOCKER_DATA_PATH}/db
+    mkdir -p ${PK_DOCKER_DATA_PATH}/db
+    cd ${PK_DOCKER_DATA_PATH}/db
+    rm -f pokedex.sqlite database-sqlite.zip
     wget -q https://github.com/metaunicorn/pokedex-data/raw/master/db/database-sqlite.zip
-    rm -f pokedex.sqlite
     unzip -q database-sqlite.zip
     rm -f database-sqlite.zip
     mv database.sqlite pokedex.sqlite
