@@ -11,6 +11,9 @@ Promise.resolve()
     return db.sqlite.open('./docker/data/db/pokedex.sqlite', Promise);
   })
   .then(function () {
+    return db.mongo.once('open', Promise);
+  })
+  .then(function () {
     return db.rethink.connect({host: 'rethinkdb', port: 28015});
   })
   .catch(function (err) {

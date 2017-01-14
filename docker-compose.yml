@@ -20,7 +20,7 @@ services:
     image: rethinkdb:2.3.5
     container_name: rethinkdb
     ports:
-      - ${PK_DB_WEBUI_PORT}:8080 # process, cluster, webui: 28015 29015 8080
+      - ${PK_RETHINKDB_WEBUI_PORT}:8080 # process, cluster, webui: 28015 29015 8080
     volumes:
       - ${PK_DOCKER_DATA_PATH}/db/rethinkdb:/data
       - ${PK_DOCKER_DATA_PATH}/logs/rethinkdb:/var/log
@@ -29,13 +29,27 @@ services:
       - RETHINKDB_PORT=28015
       - RETHINKDB_PORT_CLUSTER=29015
 
+  mongodb:
+    build: ${PK_DOCKER_CONFIG_PATH}/mongodb
+    container_name: mongodb
+    ports:
+      - 27017:27017 # process
+      - 28017:28017 # http
+    volumes:
+      - ${PK_DOCKER_DATA_PATH}/db/mongodb/db:/data/db
+      - ${PK_DOCKER_DATA_PATH}/db/mongodb/configdb:/data/configdb
+      - ${PK_DOCKER_DATA_PATH}/logs/mongodb:/var/log
+    restart: on-failure:5
+
   app:
     build: ${PK_DOCKER_CONFIG_PATH}/node
     container_name: app
     links:
       - rethinkdb:rethinkdb
+      - mongodb:mongodb
     depends_on:
       - rethinkdb
+      - mongodb
     volumes:
       - ${PK_SRC_PATH}:${PK_NODE_PATH}
       - ${PK_DOCKER_DATA_PATH}/logs/app:/var/log
