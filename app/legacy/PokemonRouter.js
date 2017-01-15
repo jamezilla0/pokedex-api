@@ -2,8 +2,7 @@
 
 const express = require('express');
 const router = express.Router();
-const db = require("app/db");
-const PokemonSpecies = require("app/models/sqlite/PokemonSpecies");
+const PokemonSpecies = require("app/legacy/PokemonSpeciesModel");
 
 router.get('/', function (req, res, next) {
   PokemonSpecies.all()

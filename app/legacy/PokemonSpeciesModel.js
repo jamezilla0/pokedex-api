@@ -2,7 +2,7 @@
 
 const db = require("app/db").sqlite;
 const _ = require("lodash");
-const Pokemon = require("./Pokemon");
+const Pokemon = require("./PokemonModel");
 const Promise = require("bluebird");
 
 /**

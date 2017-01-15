@@ -30,9 +30,16 @@ OS-specific package bindings and binaries may not work in the docker image.
 
 All API endpoints are read-only and use the `GET` HTTP Method.
 
+List of available query parameters:
+- `p[number]`:`int` Pagination page. Min = 1.
+- `p[size]`:`int` Results per pagination page. Min = 1, Max = 100.
+- `sort`:`string,-string,...` Comma separated fields. The minus sign means DESC order. Max criteria = 5.
+- `pick`:`string,-string...` Projection, fields to return or exclude (minus sign cannot be combined). Max criteria = 5.
+- `f[propName]`:`mixed` Filter and map reduce. WIP.
+
 List of available API endpoints:
 
-- [`/pokemon/`](http://localhost/pokemon/)
+- [`/pokemon/`](http://localhost/pokemon/?p[number]=2&p[size]=3&sort=-attack.base,-bs_total,nnid&pick=nnid,name,speed.base&f[speed.base][$gte]=110)
 - [`/pokemon/:id/`](http://localhost/pokemon/701/)
 - [`/pokemon/:name/`](http://localhost/pokemon/hawlucha/)
 
