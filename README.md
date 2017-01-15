@@ -39,7 +39,7 @@ List of available query parameters:
 
 List of available API endpoints:
 
-- [`/pokemon/`](http://localhost/pokemon/?p[number]=2&p[size]=3&sort=-attack.base,-bs_total,nnid&pick=nnid,name,speed.base&f[speed.base][$gte]=110)
+- [`/pokemon/`](http://localhost/pokemon/?p[number]=1&p[size]=9&sort=-stats.attack,-bs_total,nnid&pick=nnid,name,stats&f[stats.speed][$gte]=110)
 - [`/pokemon/:id/`](http://localhost/pokemon/701/)
 - [`/pokemon/:name/`](http://localhost/pokemon/hawlucha/)
 

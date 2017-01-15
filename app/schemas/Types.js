@@ -43,13 +43,14 @@ var types = {
   UniqueUint: {$type: Number, min: 0, unique: true}
 };
 
-/**
- * Pokemon Stat
- * @type {{base: (uint), yield: (uint)}}
- */
-types.Stat = {
-  base: types.Uint8,
-  yield: types.Uint8
+types.Stats = {
+  hp: types.Uint8,
+  attack: types.Uint8,
+  defense: types.Uint8,
+  sp_attack: types.Uint8,
+  sp_defense: types.Uint8,
+  speed: types.Uint8,
+  total: types.Uint
 };
 
 module.exports = types;

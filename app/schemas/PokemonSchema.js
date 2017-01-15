@@ -10,13 +10,8 @@ module.exports = mongoose.Schema(
     name: T.UniqueString,
     type_1: T.Type,
     type_2: T.Type,
-    bs_total: T.Uint, // base stats total
-    hp: T.Stat,
-    attack: T.Stat,
-    defense: T.Stat,
-    sp_attack: T.Stat,
-    sp_defense: T.Stat,
-    speed: T.Stat,
+    stats: T.Stats,
+    ev_yield: T.Stats,
     forms: [String] // tmp
   },
   {

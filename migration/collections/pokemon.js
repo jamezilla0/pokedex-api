@@ -178,31 +178,24 @@ module.exports = function () {
                 'name': row.identifier,
                 'type_1': row.type_1,
                 'type_2': row.type_2,
-                'hp': {
-                  base: row.base_hp,
-                  yield: row.yield_hp,
+                'stats': {
+                  'hp': row.base_hp,
+                  'attack': row.base_attack,
+                  'defense': row.base_defense,
+                  'sp_attack': row.base_sp_attack,
+                  'sp_defense': row.base_sp_defense,
+                  'speed': row.base_speed,
+                  'total': row.base_total,
                 },
-                'attack': {
-                  base: row.base_attack,
-                  yield: row.yield_attack,
+                'ev_yield': {
+                  'hp': row.yield_hp,
+                  'attack': row.yield_attack,
+                  'defense': row.yield_defense,
+                  'sp_attack': row.yield_sp_attack,
+                  'sp_defense': row.yield_sp_defense,
+                  'speed': row.yield_speed,
+                  'total': row.yield_total,
                 },
-                'defense': {
-                  base: row.base_defense,
-                  yield: row.yield_defense,
-                },
-                'sp_attack': {
-                  base: row.base_sp_attack,
-                  yield: row.yield_sp_attack,
-                },
-                'sp_defense': {
-                  base: row.base_sp_defense,
-                  yield: row.yield_sp_defense,
-                },
-                'speed': {
-                  base: row.base_speed,
-                  yield: row.yield_speed,
-                },
-                'bs_total': row.base_total,
                 "forms": _.map(row.forms, function (val, key) {
                   return key;
                 })
