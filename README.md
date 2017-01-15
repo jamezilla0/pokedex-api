@@ -37,9 +37,13 @@ List of available query parameters:
 - `pick`:`string,-string...` Projection, fields to return or exclude (minus sign cannot be combined). Max criteria = 5.
 - `f[propName]`:`mixed` Filter and map reduce. WIP.
 
+*Example query:*
+
+[`/pokemon/?p[number]=1&p[size]=9&sort=-stats.defense,nnid&f[stats.defense][$gte]=100&f[type]=steel&pick=nnid,name,stats,type_1,type_2`](http://localhost/pokemon/?p[number]=1&p[size]=9&sort=-stats.defense,nnid&f[stats.defense][$gte]=100&f[type]=steel&pick=nnid,name,stats,type_1,type_2)
+
 List of available API endpoints:
 
-- [`/pokemon/`](http://localhost/pokemon/?p[number]=1&p[size]=9&sort=-stats.attack,-bs_total,nnid&pick=nnid,name,stats&f[stats.speed][$gte]=110)
+- [`/pokemon/`](http://localhost/pokemon/)
 - [`/pokemon/:id/`](http://localhost/pokemon/701/)
 - [`/pokemon/:name/`](http://localhost/pokemon/hawlucha/)
 

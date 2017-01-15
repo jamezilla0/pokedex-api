@@ -1,7 +1,7 @@
 'use strict';
 
 const db = require("app/db");
-const Promise = require("bluebird");
+const Promise = require("app/core/Promise");
 const migrate_pokemon = require("migration/collections/pokemon");
 
 // Serve app only if all DB connections were successful

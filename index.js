@@ -1,6 +1,7 @@
 'use strict';
 
 const db = require("app/db");
+const Promise = require("app/core/Promise");
 
 // Serve app only if all DB connections were successful
 db.connect('pokedex')

@@ -201,7 +201,7 @@ class JsonApiHelper {
    Combines sorting and pagination
    */
   options(defaults = {}) {
-    return _.defaults(this.sorting(), this.pagination(), defaults);
+    return _.defaults(this.sorting(), _.defaults({skip: ((p.number - 1) * p.size), limit: p.size}, defaults), defaults);
   }
 
   /*

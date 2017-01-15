@@ -2,7 +2,7 @@
 
 const sqlite = require("sqlite");
 const _ = require("lodash");
-const Promise = require("bluebird");
+const Promise = require("app/core/Promise");
 const models = require("app/models");
 
 /**

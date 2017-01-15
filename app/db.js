@@ -2,9 +2,8 @@
 
 const sqlite = require("sqlite");
 const mongoose = require("mongoose");
-const Promise = require("bluebird");
-
-mongoose.Promise = require('bluebird');
+const Promise = require("app/core/Promise");
+mongoose.Promise = Promise;
 
 // BRING IN SCHEMAS & MODELS
 require("app/models").register();
