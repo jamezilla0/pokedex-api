@@ -2,7 +2,9 @@
 
 const db = require("app/db");
 const Promise = require("app/core/Promise");
-const migrate_pokemon = require("migration/collections/pokemon");
+const migrations = {
+  pokemon: require("migration/collections/pokemon")
+};
 
 // Serve app only if all DB connections were successful
 db.connect('pokedex')
@@ -10,7 +12,7 @@ db.connect('pokedex')
   .then(function () {
     // MIGRATIONS GO HERE
     return Promise.all([
-      migrate_pokemon()
+      migrations.pokemon.migrate()
     ]);
   })
   .then(() => console.info("Pokedex migrated!! =)"))

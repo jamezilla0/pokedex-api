@@ -7,7 +7,7 @@ const _ = require("lodash");
 // ROUTERS:
 const routers = {
   "/pokemon": require("app/routers/PokemonRouter"),
-  "/pokemon-legacy": require("app/legacy/PokemonRouter")
+  "/legacy/pokemon": require("app/routers/LegacyPokemonRouter")
 };
 // END ROUTERS.
 
@@ -24,13 +24,6 @@ if (process.env.NODE_ENV === 'development') {
 // Register routers:
 _.each(_.keys(routers), function (path) {
   app.use(path, routers[path]);
-});
-
-app.use(function (req, res, next) {
-  if ('$body' in res.locals) {
-    console.error('HttpError ' + err.httpStatusCode + ": " + err.message);
-    res.send({"error_code": err.httpStatusCode, "error_message": err.httpErrorMessage})
-  }
 });
 
 // Fallback middleware:

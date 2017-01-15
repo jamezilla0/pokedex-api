@@ -17,24 +17,28 @@ function _apply_model(modelName, obj, sObj, level = 0, maxLevel = 10) {
   sObj = sObj || (modelName ? mongoose.model(modelName).schema.obj : {});
 
   _.each(_.keys(sObj), function (k) {
+    var inObj = (k in obj);
+
     if (level >= maxLevel) {
-      if (k in obj) {
+      if (inObj) {
         newObj[k] = obj[k];
       }
-    } else if (k in obj) {
+    } else if (inObj) {
       if (
         !_.isArray(obj[k]) &&
         _is_obj(obj[k]) &&
         _is_obj(sObj[k])
       ) {
-        newObj[k] = _apply_model(null, obj[k], sObj[k]);
+        if (!(obj[k] == undefined || obj[k] == 'undefined')) {
+          newObj[k] = _apply_model(null, obj[k], sObj[k], level, maxLevel);
+        }
       } else if (
         _is_obj_array(obj[k]) &&
         (_.isArray(sObj[k]) || (('$type' in sObj[k]) && _.isArray(sObj[k].$type)))
       ) {
         newObj[k] = [];
         _.each(obj[k], function (oobj) {
-          newObj[k].push(_apply_model(null, oobj, ('$type' in sObj[k]) ? sObj[k].$type[0] : sObj[k][0]));
+          newObj[k].push(_apply_model(null, oobj, ('$type' in sObj[k]) ? sObj[k].$type[0] : sObj[k][0], level, maxLevel));
         });
       } else {
         newObj[k] = obj[k];

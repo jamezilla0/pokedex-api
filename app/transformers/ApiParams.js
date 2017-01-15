@@ -4,7 +4,7 @@ const _ = require("lodash");
 
 var _defaults = {
   maxPageSize: 100,
-  defaultPageSize: 24,
+  defaultPageSize: 25,
   maxSortCriteria: 5,
   maxFilters: 5,
   maxNesting: 5

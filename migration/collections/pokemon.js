@@ -1,208 +1,73 @@
 "use strict";
 
-const sqlite = require("sqlite");
 const _ = require("lodash");
 const Promise = require("app/core/Promise");
 const models = require("app/models");
+const VkPokeFinder = require("migration/finders/veekun/PokemonFinder");
+const modelName = 'Pokemon';
 
-/**
- * @param {Object} row
- * @returns {Promise}
- */
-function completePokemonData(row) {
-  return Promise.resolve(row)
-    .then(function (data) {
-      if (!data) {
-        return findPokemon(isNaN(value) ? 'identifier' : 'id', value, false);
-      }
-      return findPokemon("is_default=1 AND species_id", data.id, false);
+function _transformSingle(row) {
+  return new models.get(modelName)({
+    nnid: row.id,
+    name: row.identifier,
+    type_1: row.type_1,
+    type_2: row.type_2,
+    stats: {
+      hp: row.base_hp,
+      attack: row.base_attack,
+      defense: row.base_defense,
+      sp_attack: row.base_sp_attack,
+      sp_defense: row.base_sp_defense,
+      speed: row.base_speed,
+      total: row.base_total,
+    },
+    height: row.height ? parseInt(row.height) : null,
+    weight: row.weight ? parseInt(row.weight) : null,
+    gender: row.gender,
+    color: row.color,
+    yield: {
+      hp: row.yield_hp,
+      attack: row.yield_attack,
+      defense: row.yield_defense,
+      sp_attack: row.yield_sp_attack,
+      sp_defense: row.yield_sp_defense,
+      speed: row.yield_speed,
+      total: row.yield_total,
+    },
+    base_happiness: row.base_happiness ? parseInt(row.base_happiness) : null,
+    base_hatch_steps: row.hatch_counter ? parseInt(row.hatch_counter) : null,
+    base_capture_rate: row.capture_rate ? parseInt(row.capture_rate) : null,
+    base_experience: row.base_experience ? parseInt(row.base_experience) : null,
+    growth_group: row.growth_group,
+    flags: {
+      is_baby: row.is_baby ? true : false,
+      has_gender_differences: row.has_gender_differences ? true : false,
+    },
+    forms: _.map(row.forms, function (val, key) {
+      return key;
     })
-    .then(function (data) {
-      data.forms = {};
-      return sqlite.all('SELECT * FROM pokemon_forms' +
-        ' WHERE pokemon_id IN (SELECT id FROM pokemon WHERE species_id = ?)' +
-        ' AND (form_identifier != "") AND (form_identifier IS NOT null) ' +
-        ' ORDER BY form_order', data.species_id)
-        .then(function (forms) {
-          var formsPromises = [];
-          _.each(forms, function (form) {
-            if (form.pokemon_id != data.pokemon_id) {
-              formsPromises.push(findPokemon('id', form.pokemon_id, true));
-            } else {
-              delete form.order;
-              if (form.is_default) {
-                data = _.extend({}, form, data);
-              }
-              data.forms[form.form_identifier ? form.form_identifier : "default"] = form;
-            }
-          });
-          return Promise.all(formsPromises).then(function (forms) {
-            _.each(forms, function (form) {
-              delete form.order;
-              data.forms[form.form_identifier ? form.form_identifier : "default"] = form;
-            });
-            return data;
-          });
-        });
-    });
-}
-
-/**
- * @param {String} where
- * @param {String|int} value
- * @param {boolean} withForms
- * @returns {Promise}
- */
-function findPokemon(where, value, withForms) {
-  var id = null;
-  withForms = withForms === undefined ? true : withForms;
-
-  return new Promise(function (resolve, reject) {
-    sqlite.get('SELECT * FROM pokemon WHERE ' + where + ' = ?', value)
-      .then(function (data) {
-        if (!data) {
-          error.http404();
-        }
-        id = data.id;
-        data.pokemon_id = data.id;
-        return data;
-      })
-      .then(function (data) {
-        return sqlite.get('SELECT * FROM pokemon_species WHERE id = ?', data.species_id)
-          .then(function (species) {
-            delete species.conquest_order;
-            return _.extend({}, data, species);
-          });
-      })
-      .then(function (data) {
-        return sqlite.all('SELECT * FROM pokemon_types WHERE (pokemon_id = ?) ORDER BY slot', id)
-          .then(function (types) {
-            if (!types || !types.length) {
-              data['type_1'] = null;
-              data['type_2'] = null;
-              return data;
-            }
-            var typeNames = [
-              'normal',
-              'fighting',
-              'flying',
-              'poison',
-              'ground',
-              'rock',
-              'bug',
-              'ghost',
-              'steel',
-              'fire',
-              'water',
-              'grass',
-              'electric',
-              'psychic',
-              'ice',
-              'dragon',
-              'dark',
-              'fairy'
-            ];
-
-            _.each(types, function (type) {
-              data["type_" + type.slot] = typeNames[type.type_id - 1];
-            });
-
-            if (!('type_2' in data)) {
-              data['type_2'] = null;
-            }
-            return data;
-          });
-      })
-      .then(function (data) {
-        return sqlite.all('SELECT * FROM pokemon_stats WHERE pokemon_id = ?', id)
-          .then(function (stats) {
-            if (!stats || !stats.length) {
-              return data;
-            }
-            var statNames = ['hp', 'attack', 'defense', 'sp_attack', 'sp_defense', 'speed'];
-            var baseStatTotal = 0, yieldTotal = 0;
-            _.each(stats, function (stat) {
-              data["base_" + statNames[stat.stat_id - 1]] = parseInt(stat.base_stat);
-              baseStatTotal += parseInt(stat.base_stat);
-            });
-
-            data["base_total"] = baseStatTotal;
-
-            _.each(stats, function (stat) {
-              yieldTotal += parseInt(stat.effort);
-              data["yield_" + statNames[stat.stat_id - 1]] = parseInt(stat.effort);
-            });
-
-            data["yield_total"] = yieldTotal;
-            return data;
-          });
-      })
-      .then(function (data) {
-        if (!withForms) {
-          return data;
-        }
-        data['forms'] = {};
-        return sqlite.all('SELECT * FROM pokemon_forms WHERE (pokemon_id = ?)' +
-          ' AND (form_identifier != "") AND (form_identifier IS NOT null) ' +
-          ' ORDER BY form_order', id)
-          .then(function (forms) {
-            _.each(forms, function (form) {
-              delete form.order;
-              if ((form.pokemon_id = data.pokemon_id) && form.is_default) {
-                data = _.extend({}, form, data);
-              } else {
-                data['forms'][form.form_identifier ? form.form_identifier : "default"] = form;
-              }
-            });
-            return data;
-          });
-      })
-      .then(resolve, reject);
   });
 }
 
-module.exports = function () {
-  return new Promise(function (resolve, reject) {
-    return sqlite.all('SELECT * FROM pokemon_species ORDER BY id')
-      .then(function (rows) {
-        if (!_.isArray(rows)) {
-          return;
-        }
-        return Promise.all(_.map(rows, function (row) {
-          return completePokemonData(row)
-            .then(function (row) {
-              console.log("Migrating Poke # " + row.id);
-              // Insert into mongodb
-              return new models.get('Pokemon')({
-                'nnid': row.id,
-                'name': row.identifier,
-                'type_1': row.type_1,
-                'type_2': row.type_2,
-                'stats': {
-                  'hp': row.base_hp,
-                  'attack': row.base_attack,
-                  'defense': row.base_defense,
-                  'sp_attack': row.base_sp_attack,
-                  'sp_defense': row.base_sp_defense,
-                  'speed': row.base_speed,
-                  'total': row.base_total,
-                },
-                'ev_yield': {
-                  'hp': row.yield_hp,
-                  'attack': row.yield_attack,
-                  'defense': row.yield_defense,
-                  'sp_attack': row.yield_sp_attack,
-                  'sp_defense': row.yield_sp_defense,
-                  'speed': row.yield_speed,
-                  'total': row.yield_total,
-                },
-                "forms": _.map(row.forms, function (val, key) {
-                  return key;
-                })
-              }).save();
-            });
+function _transformAll() {
+  return VkPokeFinder.findSpecies()
+    .then(rows => {
+      return Promise.all(_.map(rows, function (row) {
+        return _transformSingle(row);
+      }));
+    });
+}
+
+module.exports = {
+  transform: _transformAll,
+  migrate: function () {
+    return _transformAll()
+      .then(docs => {
+        return Promise.all(_.map(docs, function (doc) {
+          console.log("Migrating Poke # " + doc.nnid);
+          // Insert into mongodb
+          return doc.save();
         }));
-      })
-      .then(resolve, reject);
-  })
+      });
+  }
 };

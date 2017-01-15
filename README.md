@@ -17,6 +17,8 @@ This will expose the API under the [http://localhost/](http://localhost/) URL by
 It needs the port 80 free in your host OS, in case it is not free, you can change it
 in the `PK_HTTP_PORT` variable of the `.env` file.
 
+![demo](screenshot.png)
+
 IMPORTANT: don't run `npm install` from your host machine, use `docker/bin/pm install` instead, otherwise
 OS-specific package bindings and binaries may not work in the docker image.
 

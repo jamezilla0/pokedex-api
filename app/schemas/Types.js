@@ -10,6 +10,10 @@ var types = {
    */
   Uint8: {$type: Number, min: 0, max: 255},
   /**
+   * Unsigned integer from 0 to 100
+   */
+  Percent: {$type: Number, min: 0, max: 100},
+  /**
    * Pokemon type
    */
   Type: {
@@ -37,6 +41,40 @@ var types = {
       // other:
       'unknown', // gen < 4 (Curse move)
       'shadow' // Pokemon XD (GameCube)
+    ]
+  },
+  /**
+   * Pokemon color
+   */
+  Color: {
+    $type: String,
+    enum: [
+      null,
+      "black",
+      "blue",
+      "brown",
+      "gray",
+      "green",
+      "pink",
+      "purple",
+      "red",
+      "white",
+      "yellow"
+    ]
+  },
+  /**
+   * Pokemon Growth Group
+   */
+  GrowthGroup: {
+    $type: String,
+    enum: [
+      null,
+      "slow",
+      "medium_fast",
+      "fast",
+      "medium_slow",
+      "erratic",
+      "fluctuating"
     ]
   },
   UniqueString: {$type: String, unique: true},
