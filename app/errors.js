@@ -17,7 +17,7 @@ HttpError.prototype = Object.create(Error.prototype);
 HttpError.prototype.constructor = Error;
 
 module.exports = {
-  httpError: function (message, httpStatusCode, httpErrorMessage) {
+  http: function (message, httpStatusCode, httpErrorMessage) {
     throw new HttpError(message, httpStatusCode, httpErrorMessage);
   },
   http404: function (message, httpErrorMessage) {

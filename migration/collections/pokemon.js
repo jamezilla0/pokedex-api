@@ -1,9 +1,9 @@
 "use strict";
 
-const db = require("app/db");
+const sqlite = require("sqlite");
 const _ = require("lodash");
 const Promise = require("bluebird");
-const model = require("app/models/importer");
+const models = require("app/models");
 
 /**
  * @param {Object} row
@@ -19,7 +19,7 @@ function completePokemonData(row) {
     })
     .then(function (data) {
       data.forms = {};
-      return db.sqlite.all('SELECT * FROM pokemon_forms' +
+      return sqlite.all('SELECT * FROM pokemon_forms' +
         ' WHERE pokemon_id IN (SELECT id FROM pokemon WHERE species_id = ?)' +
         ' AND (form_identifier != "") AND (form_identifier IS NOT null) ' +
         ' ORDER BY form_order', data.species_id)
@@ -58,7 +58,7 @@ function findPokemon(where, value, withForms) {
   withForms = withForms === undefined ? true : withForms;
 
   return new Promise(function (resolve, reject) {
-    db.sqlite.get('SELECT * FROM pokemon WHERE ' + where + ' = ?', value)
+    sqlite.get('SELECT * FROM pokemon WHERE ' + where + ' = ?', value)
       .then(function (data) {
         if (!data) {
           error.http404();
@@ -68,14 +68,14 @@ function findPokemon(where, value, withForms) {
         return data;
       })
       .then(function (data) {
-        return db.sqlite.get('SELECT * FROM pokemon_species WHERE id = ?', data.species_id)
+        return sqlite.get('SELECT * FROM pokemon_species WHERE id = ?', data.species_id)
           .then(function (species) {
             delete species.conquest_order;
             return _.extend({}, data, species);
           });
       })
       .then(function (data) {
-        return db.sqlite.all('SELECT * FROM pokemon_types WHERE (pokemon_id = ?) ORDER BY slot', id)
+        return sqlite.all('SELECT * FROM pokemon_types WHERE (pokemon_id = ?) ORDER BY slot', id)
           .then(function (types) {
             if (!types || !types.length) {
               data['type_1'] = null;
@@ -114,7 +114,7 @@ function findPokemon(where, value, withForms) {
           });
       })
       .then(function (data) {
-        return db.sqlite.all('SELECT * FROM pokemon_stats WHERE pokemon_id = ?', id)
+        return sqlite.all('SELECT * FROM pokemon_stats WHERE pokemon_id = ?', id)
           .then(function (stats) {
             if (!stats || !stats.length) {
               return data;
@@ -142,7 +142,7 @@ function findPokemon(where, value, withForms) {
           return data;
         }
         data['forms'] = {};
-        return db.sqlite.all('SELECT * FROM pokemon_forms WHERE (pokemon_id = ?)' +
+        return sqlite.all('SELECT * FROM pokemon_forms WHERE (pokemon_id = ?)' +
           ' AND (form_identifier != "") AND (form_identifier IS NOT null) ' +
           ' ORDER BY form_order', id)
           .then(function (forms) {
@@ -163,7 +163,7 @@ function findPokemon(where, value, withForms) {
 
 module.exports = function () {
   return new Promise(function (resolve, reject) {
-    return db.sqlite.all('SELECT * FROM pokemon_species ORDER BY id')
+    return sqlite.all('SELECT * FROM pokemon_species ORDER BY id')
       .then(function (rows) {
         if (!_.isArray(rows)) {
           return;
@@ -173,11 +173,11 @@ module.exports = function () {
             .then(function (row) {
               console.log("Migrating Poke # " + row.id);
               // Insert into mongodb
-              return new model('Pokemon')({
-                'nid': row.id,
+              return new models.get('Pokemon')({
+                'nnid': row.id,
                 'name': row.identifier,
-                'type1': row.type_1,
-                'type2': row.type_2,
+                'type_1': row.type_1,
+                'type_2': row.type_2,
                 'hp': {
                   base: row.base_hp,
                   yield: row.yield_hp,
@@ -202,7 +202,7 @@ module.exports = function () {
                   base: row.base_speed,
                   yield: row.yield_speed,
                 },
-                'base_total': row.base_total,
+                'bs_total': row.base_total,
                 "forms": _.map(row.forms, function (val, key) {
                   return key;
                 })

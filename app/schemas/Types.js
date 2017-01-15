@@ -1,17 +1,19 @@
+"use strict";
+
 var types = {
   /**
    * Unsigned integer from 0
    */
-  Uint: {type: Number, min: 0, default: null},
+  Uint: {$type: Number, min: 0},
   /**
    * Unsigned integer from 0 to 255
    */
-  Uint8: {type: Number, min: 0, max: 255, default: null},
+  Uint8: {$type: Number, min: 0, max: 255},
   /**
    * Pokemon type
    */
   Type: {
-    type: String,
+    $type: String,
     enum: [
       null,
       'normal',
@@ -35,11 +37,10 @@ var types = {
       // other:
       'unknown', // gen < 4 (Curse move)
       'shadow' // Pokemon XD (GameCube)
-    ],
-    default: null
+    ]
   },
-  UniqueString: {type: String, unique: true, default: null},
-  UniqueUint: {type: Number, min: 0, unique: true, default: null}
+  UniqueString: {$type: String, unique: true},
+  UniqueUint: {$type: Number, min: 0, unique: true}
 };
 
 /**
